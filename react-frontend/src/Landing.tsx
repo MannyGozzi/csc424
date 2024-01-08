@@ -1,8 +1,8 @@
-import React from "react";
-import { AuthContext } from "./App";
+
+import { useAuth } from "./context/AuthProvider";
 
 const Landing = () => {  
-    const value = React.useContext(AuthContext);
+    const value = useAuth()
     return (
       <>
         <h2>Landing (Protected)</h2>

@@ -1,17 +1,25 @@
 import { createContext, useContext, useState } from "react";
 import fakeAuth from "../utils/FakeAuth";
 import React from "react";
-const AuthContext = createContext({});
 
+export type AuthProviderProps = {
+  children?: React.ReactNode;
+}
 
+type AuthContextProps = {
+  token: string | null;
+  onLogin: () => void;
+  onLogout: () => void;
+}
 
+const AuthContext = createContext<AuthContextProps | null>(null);
 
-export const AuthProvider = ({ children: React.ReactNode }) => {
-  const [token, setToken] = useState(null);
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [token, setToken] = useState<string | null>(null);
 
   const handleLogin = async () => {
     const token = await fakeAuth();
-    setToken(token);
+    setToken(token as string);
   };
 
   const handleLogout = () => {
@@ -25,7 +33,7 @@ export const AuthProvider = ({ children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ value }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

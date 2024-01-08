@@ -1,12 +1,12 @@
-type HomeProps = {
-    onLogin: () => Promise<void>
-};
+import { useAuth } from "./context/AuthProvider";
 
-const Home = ({ onLogin }: HomeProps) => { 
+
+const Home = () => { 
+   const value = useAuth();
     return (
       <>
         <h2>Home (Public)</h2>
-        <button type="button" onClick={onLogin}>
+        <button type="button" onClick={value?.onLogin}>
           Sign In
         </button>
     </>

@@ -1,60 +1,35 @@
 import { Routes, Route, Link, NavLink } from "react-router-dom"
 import Landing from "./Landing"
 import Home from "./Home"
-import React from "react"
-import User from "./User"
-import fakeAuth from "./utils/FakeAuth"
-import AuthContextProps from "./AuthContextProps"
-export const AuthContext = React.createContext<AuthContextProps>(null);  // we will use this in other components
+import { AuthProvider, useAuth } from "./context/AuthProvider"
 
 export const App = () => {
-  const [user, setUser] = React.useState<User>(null);
-  const [token, setToken] = React.useState<string | null>(null);
-
-  const handleLogin = async () => {
-    const token = await fakeAuth();
-    setToken(token as string);
-  };
-  
-  const handleLogout = () => {
-    setToken(null);
-  };
-
   return (
-<AuthContext.Provider value={{token}}>    
-  <h1>React Router</h1>
-    <Navigation token={token} onLogout={handleLogout} />
-    {user ? (
-    <button onClick={handleLogout}>Sign Out</button>
-    ) : (
-    <button onClick={handleLogin}>Sign In</button>
-    )}
-    
+  <AuthProvider>    
+    <Navigation />
     <h1>React Router</h1>
     <Routes>
-      <Route index element={<Landing />} />
-      <Route path="home" element={<Home onLogin={handleLogin} />} />
+      <Route index element={<Home />} />
       <Route path="landing" element={<Landing />} />
+      <Route path="home" element={<Home />} />
       <Route path="*" element={<p>There's nothing here: 404!</p>} />
     </Routes>
-    </AuthContext.Provider>
-    );
-    };
+  </AuthProvider>
+  )
+}
 
-  type NavigationProps = {
-    token: string | null;
-    onLogout: () => void;
-  };
-
-  const Navigation = ({ token, onLogout }: NavigationProps) => (
+  const Navigation = () => {
+    const value = useAuth()
+    return (    
     <nav>
       <NavLink to="/landing">Landing</NavLink>
-      {token && (
-          <button type="button" onClick={onLogout}>
+      {value?.token && (
+          <button type="button" onClick={value.onLogout}>
             Sign Out
         </button>
       )}
       <Link to="/landing">Landing</Link>
       <Link to="/home">Home</Link>
     </nav>
-);
+    )
+}
