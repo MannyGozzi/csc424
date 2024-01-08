@@ -2,6 +2,7 @@ import { Routes, Route, Link, NavLink } from "react-router-dom"
 import Landing from "./Landing"
 import Home from "./Home"
 import { AuthProvider, useAuth } from "./context/AuthProvider"
+import ProtectedRoute from "./utils/ProtectedRoute"
 
 export const App = () => {
   return (
@@ -10,7 +11,11 @@ export const App = () => {
     <h1>React Router</h1>
     <Routes>
       <Route index element={<Home />} />
-      <Route path="landing" element={<Landing />} />
+      <Route path="landing" element={
+        <ProtectedRoute>
+          <Landing />
+        </ProtectedRoute>
+      } />
       <Route path="home" element={<Home />} />
       <Route path="*" element={<p>There's nothing here: 404!</p>} />
     </Routes>

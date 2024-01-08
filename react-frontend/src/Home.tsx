@@ -9,6 +9,8 @@ const Home = () => {
         <button type="button" onClick={value?.onLogin}>
           Sign In
         </button>
+        <input type="text" placeholder="username" />
+        <input type="password" placeholder="password" />
     </>
   );
   };
