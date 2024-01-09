@@ -28,13 +28,12 @@ export const App = () => {
     return (    
     <nav>
       <NavLink to="/landing">Landing</NavLink>
+      <Link to="/home">Home</Link>
       {value?.token && (
           <button type="button" onClick={value.onLogout}>
             Sign Out
         </button>
       )}
-      <Link to="/landing">Landing</Link>
-      <Link to="/home">Home</Link>
     </nav>
     )
 }
