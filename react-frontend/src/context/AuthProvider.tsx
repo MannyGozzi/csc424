@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
-import fakeAuth from "../utils/FakeAuth";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export type AuthProviderProps = {
   children?: React.ReactNode;
@@ -9,7 +9,7 @@ export type AuthProviderProps = {
 
 type AuthContextProps = {
   token: string | null;
-  onLogin: () => void;
+  onLogin: (username: string, password: string) => boolean;
   onLogout: () => void;
 }
 
@@ -19,9 +19,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
   const navigate = useNavigate()
 
-  const handleLogin = async () => {
-    const token = await fakeAuth();
+  const handleLogin = async (username: string, password: string) => {
     setToken(token as string);
+    axios.post("http://localhost:8000/api/account/login", {
+        username,
+        password
+        }).then((response) => {
+            if (response.data.token !== undefined) {
+                setToken(response.data.token)
+                return true
+            } else {
+                return false
+            }
+        }).catch((error) => {
+            console.log(error)
+            return false
+        }
+    )
     navigate("/landing")
   };
 

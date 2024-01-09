@@ -1,0 +1,32 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const FakeAuth_1 = __importDefault(require("../utils/FakeAuth"));
+const AccountRoutes = (0, express_1.Router)();
+AccountRoutes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const validUsername = "bj";
+    const validPassword = "pass424";
+    if (!req.body.username || !req.body.password) {
+        res.status(400).send('Missing username or password');
+        return;
+    }
+    if (req.body.username !== validUsername || req.body.password !== validPassword) {
+        res.status(401).send('Invalid username or password');
+        return;
+    }
+    const auth = yield (0, FakeAuth_1.default)();
+    res.send({ token: auth });
+}));
+exports.default = AccountRoutes;

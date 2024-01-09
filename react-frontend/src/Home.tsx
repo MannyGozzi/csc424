@@ -4,19 +4,15 @@ import { useAuth } from "./context/AuthProvider";
 
 const Home = () => { 
    const value = useAuth();
-   const validUsername = "bj"
-   const validPassword = "pass424"
    const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
    const [error, setError] = useState("")
 
    const onSignIn = () => {
-    if (username !== validUsername || password !== validPassword) {
-        setError("Invalid username or password")
-        return
-    }
     setError("")
-    value?.onLogin()
+    if (!value?.onLogin(username, password)) {
+        setError("Invalid username or password")
+    }
    }
 
     return (
