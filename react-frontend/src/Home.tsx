@@ -1,36 +1,42 @@
 import { useState } from "react";
 import { useAuth } from "./context/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 
 const Home = () => { 
-   const value = useAuth();
-   const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-   const [error, setError] = useState("")
+  const value = useAuth();
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const navigate = useNavigate()
 
-   const onSignIn = () => {
-    setError("")
-    if (!value?.onLogin(username, password)) {
-        setError("Invalid username or password")
+  const onSignIn = async () => {
+  value?.onLogin(username, password).then((success) => {
+    if (success) {
+      setError("")
+      navigate("/landing")
+    } else {
+      setError("Login failed")
     }
-   }
+  })   
+  }
 
-    return (
-      <>
-        <h2>Home (Public)</h2>
-        <input 
-            type="text" 
-            placeholder="username" 
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
-        <input 
-            type="password" 
-            placeholder="password" 
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
-        <button type="button" onClick={onSignIn}>
-          Sign In
-        </button>
-        <div>{error}</div>
-    </>);
-  };
+  return (
+    <>
+      <h2>Home (Public)</h2>
+      <input 
+          type="text" 
+          placeholder="username" 
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
+      <input 
+          type="password" 
+          placeholder="password" 
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
+      <button type="button" onClick={onSignIn}>
+        Sign In
+      </button>
+      <div>{error}</div>
+  </>);
+};
 
 export default Home

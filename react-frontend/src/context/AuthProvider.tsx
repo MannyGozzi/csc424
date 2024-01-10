@@ -9,7 +9,7 @@ export type AuthProviderProps = {
 
 type AuthContextProps = {
   token: string | null;
-  onLogin: (username: string, password: string) => boolean;
+  onLogin: (username: string, password: string) => Promise<boolean>;
   onLogout: () => void;
 }
 
@@ -17,11 +17,9 @@ const AuthContext = createContext<AuthContextProps | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
-  const navigate = useNavigate()
 
   const handleLogin = async (username: string, password: string) => {
-    setToken(token as string);
-    axios.post("http://localhost:8000/api/account/login", {
+    return axios.post("http://localhost:8000/api/account/login", {
         username,
         password
         }).then((response) => {
@@ -29,14 +27,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setToken(response.data.token)
                 return true
             } else {
+                setToken(null)
                 return false
             }
         }).catch((error) => {
             console.log(error)
+            setToken(null)
             return false
         }
     )
-    navigate("/landing")
   };
 
   const handleLogout = () => {

@@ -3,23 +3,26 @@ import Landing from "./Landing"
 import Home from "./Home"
 import { AuthProvider, useAuth } from "./context/AuthProvider"
 import ProtectedRoute from "./utils/ProtectedRoute"
+import "./App.css"
 
 export const App = () => {
   return (
-  <AuthProvider>    
-    <Navigation />
-    <h1>React Router</h1>
-    <Routes>
-      <Route index element={<Home />} />
-      <Route path="landing" element={
-        <ProtectedRoute>
-          <Landing />
-        </ProtectedRoute>
-      } />
-      <Route path="home" element={<Home />} />
-      <Route path="*" element={<p>There's nothing here: 404!</p>} />
-    </Routes>
-  </AuthProvider>
+  <div className="app">
+    <AuthProvider>    
+      <Navigation />
+      <h1>React Router</h1>
+      <Routes>
+        <Route index element={<Home />} />
+        <Route path="landing" element={
+          <ProtectedRoute>
+            <Landing />
+          </ProtectedRoute>
+        } />
+        <Route path="home" element={<Home />} />
+        <Route path="*" element={<p>There's nothing here: 404!</p>} />
+      </Routes>
+    </AuthProvider>
+  </div>
   )
 }
 
