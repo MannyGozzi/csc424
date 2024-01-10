@@ -49,4 +49,14 @@ AccountRoutes.post('/register', async (req, res) => {
     res.send({token: auth});
 });
 
+AccountRoutes.get('/get', async (req, res) => {
+    const username = req.query.username
+    const users = Object.entries(passMap).map(([user, _]: [string, string]) => user);
+    if (!username || username === '') {
+        res.send({ users });
+    } else {
+        res.send({ users: users.filter((user: string) => user === username)});
+    }
+});
+
 export default AccountRoutes;

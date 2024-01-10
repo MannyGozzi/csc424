@@ -17,6 +17,18 @@ const FakeAuth_1 = __importDefault(require("../utils/FakeAuth"));
 const AccountRoutes = (0, express_1.Router)();
 const passMap = {};
 passMap["bj"] = "pass424";
+AccountRoutes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.body.username || !req.body.password) {
+        res.status(400).send('Missing username or password');
+    }
+    if (req.body.username in passMap && req.body.password === passMap[req.body.username]) {
+        const auth = yield (0, FakeAuth_1.default)();
+        res.send({ token: auth });
+    }
+    else {
+        res.status(401).send('Invalid username or password');
+    }
+}));
 /*
     Password
     - must be of length 8 or greater
@@ -31,9 +43,9 @@ AccountRoutes.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, 
         return;
     }
     if (req.body.password.length < 8
-        && !req.body.password.match(/[A-Za-z]/)
-        && !req.body.password.match(/[0-9]/)
-        && !req.body.password.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
+        || !req.body.password.match(/[A-Za-z]/)
+        || !req.body.password.match(/[0-9]/)
+        || !req.body.password.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
         res.status(400).send('Password does not meet requirements');
         return;
     }
@@ -42,18 +54,14 @@ AccountRoutes.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, 
     console.log("passMap mapping added ", req.body.username, " to ", req.body.password);
     res.send({ token: auth });
 }));
-AccountRoutes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const validUsername = "bj";
-    const validPassword = "pass424";
-    if (!req.body.username || !req.body.password) {
-        res.status(400).send('Missing username or password');
-        return;
+AccountRoutes.get('/get', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const username = req.query.username;
+    const users = Object.entries(passMap).map(([user, _]) => user);
+    if (!username || username === '') {
+        res.send({ users });
     }
-    if (req.body.username !== validUsername || req.body.password !== validPassword) {
-        res.status(401).send('Invalid username or password');
-        return;
+    else {
+        res.send({ users: users.filter((user) => user === username) });
     }
-    const auth = yield (0, FakeAuth_1.default)();
-    res.send({ token: auth });
 }));
 exports.default = AccountRoutes;
