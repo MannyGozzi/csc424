@@ -21,6 +21,17 @@ const Home = () => {
   })   
   }
 
+  const onRegister = async () => {
+    value?.onRegister(username, password).then((success) => {
+      if (success) {
+        setError("")
+        navigate("/landing")
+      } else {
+        setError("Registration failed")
+      }
+    })   
+  }
+
   return (
     <>
       <h2>Home (Public)</h2>
@@ -34,6 +45,9 @@ const Home = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
       <button type="button" onClick={onSignIn}>
         Sign In
+      </button>
+      <button type="button" onClick={onRegister}>
+        Register
       </button>
       <div>{error}</div>
   </>);
