@@ -11,20 +11,17 @@ const passMap: PassMap = {};
 passMap["bj"] = "pass424";
 
 AccountRoutes.post('/login', async (req, res) => {
-    const validUsername = "bj"
-    const validPassword = "pass424"
-
-    if (!req.body.username || !req.body.password) {
-        res.status(400).send('Missing username or password');
-        return;
+        if (!req.body.username || !req.body.password) {
+            res.status(400).send('Missing username or password');
+        }
+        if (req.body.username in passMap && req.body.password === passMap[req.body.username]) {
+            const auth = await fakeAuth()
+            res.send({token: auth});
+        } else {
+            res.status(401).send('Invalid username or password');
+        }
     }
-    if (req.body.username !== validUsername || req.body.password !== validPassword) {
-        res.status(401).send('Invalid username or password');
-        return;
-    }
-    const auth = await fakeAuth()
-    res.send({token: auth});
-});
+);
 
 /* 
     Password 
@@ -40,10 +37,9 @@ AccountRoutes.post('/register', async (req, res) => {
         return;
     }
     if (req.body.password.length < 8
-        && !req.body.password.match(/[A-Z]/)
-        && !req.body.password.match(/[a-z]/)
-        && !req.body.password.match(/[0-9]/)
-        && !req.body.password.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
+        || !req.body.password.match(/[A-Za-z]/)
+        || !req.body.password.match(/[0-9]/)
+        || !req.body.password.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
         res.status(400).send('Password does not meet requirements');
         return;
     }
