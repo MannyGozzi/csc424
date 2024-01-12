@@ -66,3 +66,13 @@ input {
   margin: 1rem;
   padding: 1rem;
 }
+
+button {
+  padding: 0.9rem !important;
+  border-radius: 1rem !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+button:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
