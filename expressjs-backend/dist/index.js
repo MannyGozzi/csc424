@@ -6,12 +6,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const account_1 = __importDefault(require("./routes/account"));
 const cors_1 = __importDefault(require("cors"));
+const dotenv_1 = require("dotenv");
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
 const port = 8000;
+(0, dotenv_1.configDotenv)();
+process.env.TOKEN_SECRET;
+// const name = req.query["name"];
+//   const job = req.query["job"];
+//   try {
+//     const result = await userServices.getUsers(name, job);
+//     res.send({ users_list: result });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send("An error ocurred in the server.");
+//   }
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:3000', // allow setting cookies to this origin
+    credentials: true,
+}));
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use('/api/account', account_1.default);
+app.use((0, cookie_parser_1.default)());
+app.use("/api/account", account_1.default);
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });

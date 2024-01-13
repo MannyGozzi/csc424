@@ -4,8 +4,12 @@ import Home from "./Home"
 import { AuthProvider, useAuth } from "./context/AuthProvider"
 import ProtectedRoute from "./utils/ProtectedRoute"
 import "./App.css"
+import axios from "axios"
 
 export const App = () => {
+
+  axios.defaults.withCredentials = true
+
   return (
   <div className="app">
     <AuthProvider>    
@@ -14,7 +18,7 @@ export const App = () => {
       <Routes>
         <Route index element={<Home />} />
         <Route path="landing" element={
-          <ProtectedRoute>
+          <ProtectedRoute>1
             <Landing />
           </ProtectedRoute>
         } />

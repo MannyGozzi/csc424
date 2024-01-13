@@ -1,5 +1,5 @@
 type AuthContextProps = {
-    token: string | null;
-} | null
+  token: string | null;
+} | null;
 
 export default AuthContextProps;

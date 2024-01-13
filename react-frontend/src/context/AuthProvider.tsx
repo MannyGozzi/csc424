@@ -22,14 +22,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return axios.post("http://localhost:8000/api/account/login", {
         username,
         password
-        }).then((response) => {
-            if (response.data.token !== undefined) {
-                setToken(response.data.token)
-                return true
-            } else {
-                setToken(null)
-                return false
-            }
+        }, /* { withCredentials: true } */).then((response) => {
+          setToken(response.data.token)
+          return true
         }).catch((error) => {
             console.log(error)
             setToken(null)
@@ -60,6 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const handleLogout = () => {
     setToken(null);
+    document.cookie = ''
   };
 
   const value = {
