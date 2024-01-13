@@ -13,11 +13,11 @@ const https_1 = __importDefault(require("https"));
 const app = (0, express_1.default)();
 const port = 8000;
 (0, dotenv_1.configDotenv)();
-const key = fs_1.default.readFileSync(__dirname + '/../cert/localhost.decrypted.key');
-const cert = fs_1.default.readFileSync(__dirname + '/../cert/localhost.crt');
+const key = fs_1.default.readFileSync(__dirname + "/../cert/localhost.decrypted.key");
+const cert = fs_1.default.readFileSync(__dirname + "/../cert/localhost.crt");
 const options = {
     key,
-    cert
+    cert,
 };
 // const name = req.query["name"];
 //   const job = req.query["job"];
@@ -29,7 +29,7 @@ const options = {
 //     res.status(500).send("An error ocurred in the server.");
 //   }
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:3000', // allow setting cookies to this origin
+    origin: "https://localhost:3000", // allow setting cookies to this origin
     credentials: true,
 }));
 app.use(express_1.default.json());

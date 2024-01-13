@@ -16,19 +16,19 @@ const passMap: PassMap = {};
 passMap["bj"] = "pass424";
 
 AccountRoutes.post("/login", async (req, res) => {
-    if (!req.body.username || !req.body.password) {
-        res.status(400).send("Missing username or password");
-    } else if (
-        req.body.username in passMap &&
-        req.body.password === passMap[req.body.username]
-    ) {
-        const accessToken = generateAccessToken(req.body.username)
-        res.cookie("jwt", accessToken, { httpOnly: true })
-        const auth = await fakeAuth();
-        res.send({ token: auth });
-    } else {
-        res.status(401).send("Invalid username or password");
-    }
+  if (!req.body.username || !req.body.password) {
+    res.status(400).send("Missing username or password");
+  } else if (
+    req.body.username in passMap &&
+    req.body.password === passMap[req.body.username]
+  ) {
+    const accessToken = generateAccessToken(req.body.username);
+    res.cookie("jwt", accessToken, { httpOnly: true });
+    const auth = await fakeAuth();
+    res.send({ token: auth });
+  } else {
+    res.status(401).send("Invalid username or password");
+  }
 });
 
 /* 
@@ -75,9 +75,12 @@ AccountRoutes.get("/get", async (req, res) => {
   }
 });
 
-AccountRoutes.get("/token", authenticateToken as RequestHandler, async (req, res) => {
+AccountRoutes.get(
+  "/token",
+  authenticateToken as RequestHandler,
+  async (req, res) => {
     res.send({ token: await fakeAuth() });
-});
-
+  },
+);
 
 export default AccountRoutes;
