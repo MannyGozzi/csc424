@@ -1,12 +1,18 @@
 
-import { useAuth } from "./context/AuthProvider";
+import getToken from "./api/GetAuthToken";
+import { useState } from "react";
 
 const Landing = () => {  
-    const value = useAuth()
+    const [token, setToken] = useState<string>("...")
+
+    getToken().then((token: string) => {
+        setToken(token)
+    })
+    
     return (
       <>
         <h2>Landing (Protected)</h2>
-        <div> Authenticated as {value?.token}</div>
+        <div> Authenticated as {token}</div>
       </>
     );
   };

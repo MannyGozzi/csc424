@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const FakeAuth_1 = __importDefault(require("../utils/FakeAuth"));
 const AccessToken_1 = __importDefault(require("../utils/AccessToken"));
+const AuthenticateToken_1 = __importDefault(require("../middleware/AuthenticateToken"));
 const AccountRoutes = (0, express_1.Router)();
 const passMap = {};
 passMap["bj"] = "pass424";
@@ -26,7 +27,8 @@ AccountRoutes.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, fun
         req.body.password === passMap[req.body.username]) {
         const accessToken = (0, AccessToken_1.default)(req.body.username);
         res.cookie("jwt", accessToken, { httpOnly: true });
-        res.send("Logged in");
+        const auth = yield (0, FakeAuth_1.default)();
+        res.send({ token: auth });
     }
     else {
         res.status(401).send("Invalid username or password");
@@ -65,5 +67,8 @@ AccountRoutes.get("/get", (req, res) => __awaiter(void 0, void 0, void 0, functi
     else {
         res.send({ users: users.filter((user) => user === username) });
     }
+}));
+AccountRoutes.get("/token", AuthenticateToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send({ token: yield (0, FakeAuth_1.default)() });
 }));
 exports.default = AccountRoutes;

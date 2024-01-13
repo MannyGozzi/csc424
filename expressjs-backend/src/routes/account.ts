@@ -4,6 +4,7 @@ import { RequestHandler } from "express";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import generateAccessToken from "../utils/AccessToken";
+import authenticateToken from "../middleware/AuthenticateToken";
 
 const AccountRoutes = Router();
 
@@ -23,7 +24,8 @@ AccountRoutes.post("/login", async (req, res) => {
     ) {
         const accessToken = generateAccessToken(req.body.username)
         res.cookie("jwt", accessToken, { httpOnly: true })
-        res.send("Logged in");
+        const auth = await fakeAuth();
+        res.send({ token: auth });
     } else {
         res.status(401).send("Invalid username or password");
     }
@@ -72,5 +74,10 @@ AccountRoutes.get("/get", async (req, res) => {
     res.send({ users: users.filter((user: string) => user === username) });
   }
 });
+
+AccountRoutes.get("/token", authenticateToken as RequestHandler, async (req, res) => {
+    res.send({ token: await fakeAuth() });
+});
+
 
 export default AccountRoutes;

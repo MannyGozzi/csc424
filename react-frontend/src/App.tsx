@@ -18,7 +18,7 @@ export const App = () => {
       <Routes>
         <Route index element={<Home />} />
         <Route path="landing" element={
-          <ProtectedRoute>1
+          <ProtectedRoute>
             <Landing />
           </ProtectedRoute>
         } />
@@ -36,7 +36,7 @@ export const App = () => {
     <nav>
       <NavLink to="/landing">Landing</NavLink>
       <Link to="/home">Home</Link>
-      {value?.token && (
+      {localStorage.getItem('loggedIn') == 'true' && value && (
           <button type="button" onClick={value.onLogout}>
             Sign Out
         </button>
