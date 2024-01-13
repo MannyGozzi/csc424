@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(localStorage.getItem('loggedIn') == 'true');
 
   const handleLogin = async (username: string, password: string) => {
-    return axios.post("http://localhost:8000/api/account/login", {
+    return axios.post("https://localhost:8000/api/account/login", {
         username,
         password
         }, /* { withCredentials: true } */).then((response) => {
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const handleRegister = async (username: string, password: string) => {
-    return axios.post("http://localhost:8000/api/account/register", {
+    return axios.post("https://localhost:8000/api/account/register", {
         username,
         password
         }).then((response) => {

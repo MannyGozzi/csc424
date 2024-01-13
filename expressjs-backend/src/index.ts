@@ -4,11 +4,19 @@ import cors from "cors";
 import * as userServices from "./models/user-services.js";
 import { configDotenv } from "dotenv";
 import cookieParser from "cookie-parser";
+import fs from 'fs'
+import https from 'https'
 
 const app = express();
 const port: number = 8000;
 configDotenv();
-process.env.TOKEN_SECRET
+
+const key = fs.readFileSync(__dirname + '/../cert/localhost.decrypted.key')
+const cert = fs.readFileSync(__dirname + '/../cert/localhost.crt');
+const options = {
+    key,
+    cert
+}
 // const name = req.query["name"];
 //   const job = req.query["job"];
 //   try {
@@ -20,7 +28,7 @@ process.env.TOKEN_SECRET
 //   }
 
 app.use(cors({
-    origin: 'http://localhost:3000', // allow setting cookies to this origin
+    origin: 'https://localhost:3000', // allow setting cookies to this origin
     credentials: true,
 }));
 app.use(express.json());
@@ -29,8 +37,10 @@ app.use(cookieParser());
 
 app.use("/api/account", AccountRoutes);
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+
+const server = https.createServer(options, app)
+server.listen(port, () => {
+  console.log(`Example app listening at https://localhost:${port}`);
 });
 
 // this was stripped from stackoverflow
