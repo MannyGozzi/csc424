@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 
-function generateAccessToken(username: string) {
+function generateAccessToken(user: any) {
   return jwt.sign(
-    { username: username },
+    { user },
     process.env.TOKEN_SECRET as jwt.Secret,
     { expiresIn: "1h" },
   );

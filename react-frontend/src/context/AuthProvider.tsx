@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setToken(null);
     setLoggedIn(false);
     localStorage.setItem('loggedIn', 'false')
-    document.cookie = ''
+    document.cookie = 'jwt=;'
   };
 
   const value = {
