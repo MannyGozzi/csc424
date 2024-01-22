@@ -1,11 +1,11 @@
 import express from "express";
-import AccountRoutes from "./routes/account";
 import cors from "cors";
-import * as userServices from "./models/user-services.js";
 import { configDotenv } from "dotenv";
 import cookieParser from "cookie-parser";
 import fs from "fs";
 import https from "https";
+import AccountRoutes from "./routes/account";
+import DataRoutes from "./routes/data";
 
 const app = express();
 const port: number = 8000;
@@ -38,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api/account", AccountRoutes);
+app.use("/api/data", DataRoutes);
 
 const server = https.createServer(options, app);
 server.listen(port, () => {

@@ -25,6 +25,10 @@ const UserSchema = new mongoose.Schema(
     jwt: {
       type: String,
       required: true,
+    },
+    contacts: {
+      type: Array,
+      required: false,
     }
   },
   { collection: "users_list" },
