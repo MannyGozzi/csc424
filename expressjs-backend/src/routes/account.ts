@@ -1,9 +1,6 @@
 import { Router } from "express";
-import fakeAuth from "../utils/FakeAuth";
 import { RequestHandler } from "express";
-import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import generateAccessToken from "../utils/AccessToken";
 import authenticateToken from "../middleware/AuthenticateToken";
 import userServices from "../models/user-services";
 
@@ -21,13 +18,26 @@ AccountRoutes.post("/login", async (req, res) => {
     res.status(400).send("Missing username or password");
     return
   } else {
-    await userServices.findUserByUsernamePassword(req.body.username, req.body.password).then((user: any) => {
-        res.cookie("jwt", user.jwt, { httpOnly: true });
-        console.log(user)
-        res.send({ token: user.jwt });
-    }).catch((error: any) => {
+    await userServices.findUserByUsernamePassword(req.body.username, req.body.password).then(async (user: any) => {
+      if (user === null) {
         res.status(401).send("Invalid username or password");
-    });
+        return;
+      } else {
+        try {
+          jwt.verify(user.jwt, process.env.TOKEN_SECRET as jwt.Secret)
+          res.cookie("jwt", user.jwt, { httpOnly: true });
+          res.send({ token: user.jwt });
+        } catch (err) {
+          // issue new cookie if theirs is invalid
+          const jtwToken = jwt.sign({ username: req.body.username }, process.env.TOKEN_SECRET as jwt.Secret, { expiresIn: "1h" });
+          user.jwt = jtwToken;
+          await user.save()
+          res.cookie("jwt", user.jwt, { httpOnly: true });
+          res.send({ token: user.jwt });
+        }
+      }
+      
+    })
   }
 });
 

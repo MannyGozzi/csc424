@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setToken(null)
             localStorage.setItem('loggedIn', 'false')
             setLoggedIn(false)
-            return false
+            return z
         }
     )
   }
