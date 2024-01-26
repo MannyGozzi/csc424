@@ -34,3 +34,8 @@ openssl rsa -in localhost.key \
 ## Notes
 Note that the vite mkcert plugin is used in order to manage
 the certificates for the frontend.
+
+## To create new SBOM
+```bash
+cyclonedx add files --no-input --output-format json  > cyclonedx_be_sbom.json
+```
