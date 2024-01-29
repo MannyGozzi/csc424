@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-function generateAccessToken(user: any) {
+function generateJWT(user: any) {
   return jwt.sign(
     { user },
     process.env.TOKEN_SECRET as jwt.Secret,
@@ -8,4 +8,4 @@ function generateAccessToken(user: any) {
   );
 }
 
-export default generateAccessToken;
+export default generateJWT;

@@ -6,6 +6,8 @@ import fs from "fs";
 import https from "https";
 import AccountRoutes from "./routes/account";
 import DataRoutes from "./routes/data";
+import OAuthRoutes from "./routes/oauth";
+import RequestRoutes from "./routes/request";
 
 const app = express();
 const port: number = 8000;
@@ -17,15 +19,6 @@ const options = {
   key,
   cert,
 };
-// const name = req.query["name"];
-//   const job = req.query["job"];
-//   try {
-//     const result = await userServices.getUsers(name, job);
-//     res.send({ users_list: result });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("An error ocurred in the server.");
-//   }
 
 app.use(
   cors({
@@ -39,6 +32,8 @@ app.use(cookieParser());
 
 app.use("/api/account", AccountRoutes);
 app.use("/api/data", DataRoutes);
+app.use("/oath", OAuthRoutes);
+app.use("/request", RequestRoutes);
 
 const server = https.createServer(options, app);
 server.listen(port, () => {

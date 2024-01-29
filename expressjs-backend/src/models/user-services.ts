@@ -2,7 +2,7 @@ import mongoose, { ConnectOptions, Schema } from "mongoose";
 import userModel from "./user";
 import fakeAuth from "../utils/FakeAuth";
 import authenticateToken from "../middleware/AuthenticateToken";
-import generateAccessToken from "../utils/AccessToken";
+import generateJWT from "../utils/AccessToken";
 
 // uncomment the following line to view mongoose debug messages
 mongoose.set("debug", true);
@@ -49,7 +49,7 @@ async function findUserByJwt(jwt: string) {
 
 async function addUser(user: any) {
   try {
-    user.jwt = generateAccessToken(user);
+    user.jwt = generateJWT(user);
     const userToAdd = new userModel(user);
     const savedUser = await userToAdd.save();
     return savedUser;
