@@ -2,9 +2,8 @@
 import getAllUsers from "./api/GetAllUsers";
 import getToken from "./api/GetAuthToken";
 import { useEffect, useState } from "react";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getContactsAPI, setContactsAPI } from "./api/Contacts";
+import { FaCircleCheck } from "react-icons/fa6";
 
 const Landing = () => {  
     const [token, setToken] = useState<string>("...")
@@ -52,7 +51,7 @@ const Landing = () => {
             {users.filter(x => !contacts.includes(x)).map((contact: string, index: number) => (
               <div key={index} className="contact-item">
                 <p>{contact}</p>
-                <button onClick={() => onAddContact(contact)}><FontAwesomeIcon icon={faXmark}/></button>
+                <button onClick={() => onAddContact(contact)}><FaCircleCheck size={20}/></button>
               </div>
             ))}
           </div>
