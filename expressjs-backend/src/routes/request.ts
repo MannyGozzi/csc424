@@ -1,10 +1,13 @@
-import { Request, Response } from "express";
+/*
+  This route is called by the user from the frontend to contact google oauth
+*/
 
+import { Request, Response } from "express";
 const express = require("express");
 const RequestRoutes = express.Router();
 const dotenv = require("dotenv");
-dotenv.config();
 const { OAuth2Client } = require("google-auth-library");
+dotenv.config();
 
 RequestRoutes.post("/", async function (req: Request, res: Response, next: any) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
