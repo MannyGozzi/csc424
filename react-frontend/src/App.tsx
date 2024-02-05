@@ -4,8 +4,12 @@ import Home from "./Home"
 import { AuthProvider, useAuth } from "./context/AuthProvider"
 import ProtectedRoute from "./utils/ProtectedRoute"
 import "./App.css"
+import axios from "axios"
 
 export const App = () => {
+
+  axios.defaults.withCredentials = true
+
   return (
   <div className="app">
     <AuthProvider>    
@@ -32,7 +36,7 @@ export const App = () => {
     <nav>
       <NavLink to="/landing">Landing</NavLink>
       <Link to="/home">Home</Link>
-      {value?.token && (
+      {localStorage.getItem('loggedIn') == 'true' && value && (
           <button type="button" onClick={value.onLogout}>
             Sign Out
         </button>

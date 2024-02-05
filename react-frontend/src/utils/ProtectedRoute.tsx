@@ -7,7 +7,7 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const value = useAuth();
-  if (!value?.token) {
+  if (!value?.loggedIn) {
     return <Navigate to="/home" replace />;
   }
   return children;

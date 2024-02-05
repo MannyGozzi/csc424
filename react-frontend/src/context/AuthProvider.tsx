@@ -8,6 +8,7 @@ export type AuthProviderProps = {
 
 type AuthContextProps = {
   token: string | null;
+  loggedIn: boolean;
   onLogin: (username: string, password: string) => Promise<boolean>;
   onLogout: () => void;
   onRegister: (username: string, password: string) => Promise<boolean>;
@@ -17,53 +18,63 @@ const AuthContext = createContext<AuthContextProps | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
+  const [loggedIn, setLoggedIn] = useState<boolean>(localStorage.getItem('loggedIn') == 'true');
 
   const handleLogin = async (username: string, password: string) => {
-    return axios.post("http://localhost:8000/api/account/login", {
+    return axios.post("https://localhost:8000/api/account/login", {
         username,
         password
-        }).then((response) => {
-            if (response.data.token !== undefined) {
-                setToken(response.data.token)
-                return true
-            } else {
-                setToken(null)
-                return false
-            }
+        }, /* { withCredentials: true } */).then((response) => {
+          setToken(response.data.token)
+          localStorage.setItem('loggedIn', 'true')
+          setLoggedIn(true)
+          return true
         }).catch((error) => {
-            console.log(error)
+            console.log("Error logging in", error)
             setToken(null)
+            localStorage.setItem('loggedIn', 'false')
+            setLoggedIn(false)
             return false
         }
     )
   };
 
   const handleRegister = async (username: string, password: string) => {
-    return axios.post("http://localhost:8000/api/account/register", {
+    return axios.post("https://localhost:8000/api/account/register", {
         username,
         password
         }).then((response) => {
             if (response.data.token !== undefined) {
                 setToken(response.data.token)
+                localStorage.setItem('loggedIn', 'true')
+                setLoggedIn(true)
                 return true
             } else {
                 setToken(null)
+                localStorage.setItem('loggedIn', 'false')
+                setLoggedIn(false)
                 return false
             }
         }).catch((error) => {
             console.log(error)
             setToken(null)
-            return false
+            localStorage.setItem('loggedIn', 'false')
+            setLoggedIn(false)
+            return z
         }
     )
   }
 
   const handleLogout = () => {
     setToken(null);
+    setLoggedIn(false);
+    localStorage.setItem('loggedIn', 'false')
+    document.cookie = 'jwt=;'
   };
 
   const value = {
     token,
+    loggedIn,
     onLogin: handleLogin,
     onLogout: handleLogout,
     onRegister: handleRegister
