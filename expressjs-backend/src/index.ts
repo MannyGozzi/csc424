@@ -32,7 +32,7 @@ app.use(cookieParser());
 
 app.use("/api/account", AccountRoutes);
 app.use("/api/data", DataRoutes);
-app.use("/oath", OAuthRoutes);
+app.use("/oauth", OAuthRoutes);
 app.use("/request", RequestRoutes);
 
 const server = https.createServer(options, app);

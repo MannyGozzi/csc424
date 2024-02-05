@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import getAllUsers from "./api/GetAllUsers";
@@ -44,6 +44,21 @@ const Home = () => {
     });
   }
 
+  const onSignInOAuth = async () => {
+    value?.onLoginOAuth().then((redirectUrl) => {
+      if (redirectUrl) {
+        setError("");
+        window.location.href = redirectUrl
+      } else {
+        setError("Login failed");
+      }
+    });
+  };
+
+  useEffect(() => {
+    const token = window.URLSearchParams.token
+  }, []);
+
   return (
     <div>
       <h2>Home (Public)</h2>
@@ -75,6 +90,9 @@ const Home = () => {
         <div className="accountButtonsGroup">
           <button type="button" onClick={onSignIn}>
             Sign In
+          </button>
+          <button type="button" onClick={onSignInOAuth}>
+            Sign in with Google
           </button>
           <button type="button" onClick={onRegister}>
             Register

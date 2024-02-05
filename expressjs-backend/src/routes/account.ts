@@ -6,13 +6,6 @@ import userServices from "../models/user-services";
 
 const AccountRoutes = Router();
 
-interface PassMap {
-    [key: string]: string;
-}
-
-const passMap: PassMap = {};
-passMap["bj"] = "pass424";
-
 AccountRoutes.post("/login", async (req, res) => {
   if (!req.body.username || !req.body.password) {
     res.status(400).send("Missing username or password");
@@ -45,9 +38,6 @@ AccountRoutes.post("/login", async (req, res) => {
     On successful registration a token is returned
 */
 AccountRoutes.post("/register", async (req, res) => {
-  if (req.body.username in passMap) {
-    return res.status(400).send("Username already exists");
-  }
   if (
     req.body.password.length < 8 ||
     !req.body.password.match(/[A-Za-z]/) ||
@@ -56,7 +46,6 @@ AccountRoutes.post("/register", async (req, res) => {
   ) {
     return res.status(400).send("Password does not meet requirements");
   }
-  passMap[req.body.username] = req.body.password;
   userServices.addUser({ username: req.body.username, password: req.body.password }).then((user: any) => {
     console.log("user: ", user);
     return res.send({ token: user.jwt });

@@ -18,12 +18,13 @@ async function getUserData(access_token: string) {
 
   const data = await response.json();
   console.log("data", data);
+  return data;
 }
 
 OAuthRoutes.get("/", async function (req: Request, res: Response, next: any) {
   const code = req.query.code;
   try {
-    const redirectUrl = "https://127.0.0.1:8000/oath";
+    const redirectUrl = "https://127.0.0.1:8000/oauth";
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,
@@ -33,16 +34,20 @@ OAuthRoutes.get("/", async function (req: Request, res: Response, next: any) {
     const result = await oAuth2Client.getToken(code);
     await oAuth2Client.setCredentials(result.tokens);
     const user = oAuth2Client.credentials;
-    await getUserData(user.access_token);
+    const userData = await getUserData(user.access_token);
 
         
     // call your code to generate a new JWT from your backend, don't reuse Googles
-    const token = generateJWT(user.appUser.userid);
-    res.redirect(303, `http://localhost:3000/token=${token}`);
-
+    console.log(user);
+    console.log(userData)
+    const jwtToken = generateJWT(user.id_token);
+    user.jwt = jwtToken;
+    await user.save()
+    res.cookie("jwt", jwtToken, { httpOnly: true });
+    res.redirect(303, `https://localhost:3000`);
     } catch (err) {
         console.log("Error with signin with Google", err);
-        res.redirect(303, "http://localhost:3000/");
+        res.redirect(303, "https://localhost:3000/");
     }
 });
 

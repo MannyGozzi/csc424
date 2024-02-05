@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import React from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 export type AuthProviderProps = {
   children?: React.ReactNode;
@@ -12,6 +12,7 @@ type AuthContextProps = {
   onLogin: (username: string, password: string) => Promise<boolean>;
   onLogout: () => void;
   onRegister: (username: string, password: string) => Promise<boolean>;
+  onLoginOAuth: () => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -65,6 +66,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     )
   }
 
+  const onLoginOAuth = async () => {
+    return await axios.post("https://localhost:8000/request").then((res: AxiosResponse<any, any>) => {
+      return res.data.redirect_url
+    }).catch((error) => {
+      console.log(error)
+      setToken(null)
+      setLoggedIn(false)
+      localStorage.setItem('loggedIn', 'false')
+    })
+  }
+
   const handleLogout = () => {
     setToken(null);
     setLoggedIn(false);
@@ -77,7 +89,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     loggedIn,
     onLogin: handleLogin,
     onLogout: handleLogout,
-    onRegister: handleRegister
+    onRegister: handleRegister,
+    onLoginOAuth
   };
 
   return (
