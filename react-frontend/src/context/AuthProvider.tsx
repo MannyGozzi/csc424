@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 import React from "react";
 import axios, { AxiosResponse } from "axios";
 
@@ -6,36 +6,48 @@ export type AuthProviderProps = {
   children?: React.ReactNode;
 }
 
+export type LoginResponse = {
+  jwt?: string;
+  error?: string
+}
+
+export type RegisterResponse = {
+  success?: string;
+  error?: string
+}
+
 type AuthContextProps = {
-  token: string | null;
-  loggedIn: boolean;
-  onLogin: (username: string, password: string) => Promise<boolean>;
+  onLogin: (username: string, password: string) => Promise<LoginResponse>;
   onLogout: () => void;
-  onRegister: (username: string, password: string) => Promise<boolean>;
+  onRegister: (username: string, password: string) => Promise<RegisterResponse>;
   onLoginOAuth: () => Promise<string>;
+  loggedIn: boolean;
+  saveLogin: (login: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [token, setToken] = useState<string | null>(null);
-  const [loggedIn, setLoggedIn] = useState<boolean>(localStorage.getItem('loggedIn') == 'true');
+  const [loggedIn, setLoggedIn] = React.useState(window.localStorage.getItem('loggedIn') === 'true');
+
+  const saveLogin = (login: boolean) => {
+    window.localStorage.setItem('loggedIn', login ? 'true' : 'false')
+    if (!login) {
+      document.cookie = 'jwt=;';
+    }
+    setLoggedIn(login)
+  }
 
   const handleLogin = async (username: string, password: string) => {
     return axios.post("https://localhost:8000/api/account/login", {
         username,
         password
-        }, /* { withCredentials: true } */).then((response) => {
-          setToken(response.data.token)
-          localStorage.setItem('loggedIn', 'true')
-          setLoggedIn(true)
-          return true
+        }).then((res) => {
+          saveLogin(true)
+          return { jwt: res.data.token}
         }).catch((error) => {
-            console.log("Error logging in", error)
-            setToken(null)
-            localStorage.setItem('loggedIn', 'false')
-            setLoggedIn(false)
-            return false
+          saveLogin(false)
+          return { error: error.response.data }
         }
     )
   };
@@ -44,24 +56,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return axios.post("https://localhost:8000/api/account/register", {
         username,
         password
-        }).then((response) => {
-            if (response.data.token !== undefined) {
-                setToken(response.data.token)
-                localStorage.setItem('loggedIn', 'true')
-                setLoggedIn(true)
-                return true
-            } else {
-                setToken(null)
-                localStorage.setItem('loggedIn', 'false')
-                setLoggedIn(false)
-                return false
-            }
+        }).then((res) => {
+          if (res.data.error) {
+            saveLogin(false)
+            return {error: res.data.error}
+          }
+          saveLogin(true)
+          return {success: "Registation success"}
         }).catch((error) => {
-            console.log(error)
-            setToken(null)
-            localStorage.setItem('loggedIn', 'false')
-            setLoggedIn(false)
-            return z
+          saveLogin(false)
+          console.log(error)
+          return { error: error.response.data}
         }
     )
   }
@@ -71,26 +76,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return res.data.redirect_url
     }).catch((error) => {
       console.log(error)
-      setToken(null)
-      setLoggedIn(false)
-      localStorage.setItem('loggedIn', 'false')
     })
   }
 
   const handleLogout = () => {
-    setToken(null);
-    setLoggedIn(false);
-    localStorage.setItem('loggedIn', 'false')
     document.cookie = 'jwt=;'
+    saveLogin(false)
   };
 
   const value = {
-    token,
-    loggedIn,
     onLogin: handleLogin,
     onLogout: handleLogout,
     onRegister: handleRegister,
-    onLoginOAuth
+    onLoginOAuth,
+    loggedIn,
+    saveLogin
   };
 
   return (

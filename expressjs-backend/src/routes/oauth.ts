@@ -7,6 +7,7 @@ const express = require("express");
 const OAuthRoutes = express.Router();
 const dotenv = require("dotenv");
 import generateJWT from "../utils/AccessToken";
+import userServices from "../models/user-services";
 const { OAuth2Client } = require("google-auth-library");
 dotenv.config();
 
@@ -36,18 +37,16 @@ OAuthRoutes.get("/", async function (req: Request, res: Response, next: any) {
     const user = oAuth2Client.credentials;
     const userData = await getUserData(user.access_token);
 
-        
     // call your code to generate a new JWT from your backend, don't reuse Googles
-    console.log(user);
-    console.log(userData)
     const jwtToken = generateJWT(user.id_token);
-    user.jwt = jwtToken;
-    await user.save()
+    await userServices.addUser({ username: userData.name, jwt: jwtToken});
     res.cookie("jwt", jwtToken, { httpOnly: true });
-    res.redirect(303, `https://localhost:3000`);
+    const url = new URL(process.env.CLIENT_URL as string);
+    url.searchParams.append("token", jwtToken);
+    res.redirect(303, url.toString());
     } catch (err) {
         console.log("Error with signin with Google", err);
-        res.redirect(303, "https://localhost:3000/");
+        res.redirect(303, process.env.CLIENT_URL as string);
     }
 });
 

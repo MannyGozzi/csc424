@@ -10,10 +10,10 @@ const { OAuth2Client } = require("google-auth-library");
 dotenv.config();
 
 RequestRoutes.post("/", async function (req: Request, res: Response, next: any) {
-  res.header("Access-Control-Allow-Origin", "https://localhost:3000");
+  res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);
   res.header("Referrer-Policy", "no-referrer-when-downgrade"); // needed for http
 
-  const redirectUrl = "https://127.0.0.1:8000/oauth";
+  const redirectUrl = `${process.env.HOST_URL}/oauth`;
   const oAuth2Client = new OAuth2Client(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,

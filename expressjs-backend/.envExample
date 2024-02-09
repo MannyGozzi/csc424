@@ -2,3 +2,5 @@ TOKEN_SECRET =
 CLIENT_ID=<google client id>
 CLIENT_SECRET=<google client secret>
 MONGO_URI=http://localhost:27017/users
+CLIENT_URL=https://localhost:3000
+HOST_URL=https://127.0.0.1:8000

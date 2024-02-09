@@ -36,8 +36,8 @@ export const App = () => {
     <nav>
       <NavLink to="/landing">Landing</NavLink>
       <Link to="/home">Home</Link>
-      {localStorage.getItem('loggedIn') == 'true' && value && (
-          <button type="button" onClick={value.onLogout}>
+      {value?.loggedIn && (
+          <button type="button" onClick={value?.onLogout}>
             Sign Out
         </button>
       )}

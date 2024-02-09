@@ -1,7 +1,5 @@
 import mongoose, { ConnectOptions, Schema } from "mongoose";
 import userModel from "./user";
-import fakeAuth from "../utils/FakeAuth";
-import authenticateToken from "../middleware/AuthenticateToken";
 import generateJWT from "../utils/AccessToken";
 import { configDotenv } from "dotenv";
 
@@ -25,7 +23,7 @@ async function getUsers(name: string, job: string) {
   } else if (job && !name) {
     result = await findUserByJob(job)
   }
-  result = result?.map((user: any) => user.username)
+  result = Array.isArray(result) ? result.map((user: any) => user.username) : result;
   return result;
 }
 
@@ -49,11 +47,17 @@ async function findUserByJwt(jwt: string) {
   }
 }
 
-async function addUser(user: any) {
+async function addUser(userParams: any) {
   try {
+    const user = {
+      username: userParams.username,
+      password: userParams.password,
+      jwt: ""
+    }
     user.jwt = generateJWT(user);
     const userToAdd = new userModel(user);
     const savedUser = await userToAdd.save();
+    console.log("Saving user: ", savedUser)
     return savedUser;
   } catch (error) {
     console.log(error);
@@ -62,7 +66,7 @@ async function addUser(user: any) {
 }
 
 async function findUserByName(username: string) {
-  return await userModel.find({ username: username });
+  return await userModel.findOne({ username: username });
 }
 
 async function findUserByUsernamePassword(username: string, password: string) {

@@ -6,8 +6,10 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+
   const value = useAuth();
-  if (!value?.loggedIn) {
+  if (value?.loggedIn === false){
+    console.log("Not logged in, redirecting to /home")
     return <Navigate to="/home" replace />;
   }
   return children;

@@ -71,6 +71,10 @@ button {
   padding: 0.9rem !important;
   border-radius: 1rem !important;
   transition: all 0.2s ease-in-out !important;
+  display: flex;
+  min-width: 5rem !important;
+  justify-content: center !important;
+  align-items: center !important ;
 }
 
 button:hover {

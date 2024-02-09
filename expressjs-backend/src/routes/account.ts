@@ -13,7 +13,7 @@ AccountRoutes.post("/login", async (req, res) => {
   } 
   await userServices.findUserByUsernamePassword(req.body.username, req.body.password).then(async (user: any) => {
     if (user === null) {
-      return res.status(401).send("Invalid username or password")
+      return res.status(401).send("Invalid username or password" )
     }
     try {
       jwt.verify(user.jwt, process.env.TOKEN_SECRET as jwt.Secret)
@@ -38,18 +38,26 @@ AccountRoutes.post("/login", async (req, res) => {
     On successful registration a token is returned
 */
 AccountRoutes.post("/register", async (req, res) => {
+  if (!req.body.username) return res.status(400).send("Missing username");
+  if (!req.body.password) return res.status(400).send("Missing password");
+  if (await userServices.findUserByName(req.body.username)) {
+    return res.status(400).send("Username already exists");
+  }
   if (
     req.body.password.length < 8 ||
     !req.body.password.match(/[A-Za-z]/) ||
     !req.body.password.match(/[0-9]/) ||
     !req.body.password.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)
   ) {
-    return res.status(400).send("Password does not meet requirements");
+    return res.status(400).send("Registration failed, 8+ chars, 1 num, 1 sym.");
   }
   userServices.addUser({ username: req.body.username, password: req.body.password }).then((user: any) => {
-    console.log("user: ", user);
+    console.log("account created: ", user);
     return res.send({ token: user.jwt });
-  });
+  }).catch((error: any) => {
+    console.log("error: ", error);
+    return res.status(500).send("An error ocurred in the server.");
+  })
 });
 
 AccountRoutes.get("/get", async (req, res) => {

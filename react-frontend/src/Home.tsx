@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import getAllUsers from "./api/GetAllUsers";
+import { FaGoogle } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
 
 const Home = () => {
   const value = useAuth();
@@ -13,27 +15,45 @@ const Home = () => {
   const [allUsers, setAllUsers] = useState<string[]>([]);
   const navigate = useNavigate();
   const passwordField = useRef<HTMLInputElement>(null);
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    const getOAuthTokenFromWindowIfExists = () => {
+      const params = Object.fromEntries([...searchParams])
+      if ("token" in params) {
+        document.cookie = `jwt=${params.token};`
+        value?.saveLogin(true)
+        navigate("/landing")
+      }
+    }
+
+    getOAuthTokenFromWindowIfExists()
+  }, [navigate, searchParams, value, value?.loggedIn])
+  
 
   const onSignIn = async () => {
-    value?.onLogin(username, password).then((success) => {
-      if (success) {
+    value?.onLogin(username, password).then((res) => {
+      if (res?.jwt) {
+        console.log("logging in")
+        console.log(res)
         setError("");
         navigate("/landing");
       } else {
-        setError("Login failed");
+        console.log(res?.error)
+        setError(res?.error || "Login failed");
       }
-    });
-  };
+    })
+  }
 
   const onRegister = async () => {
-    value?.onRegister(username, password).then((success) => {
-      if (success) {
-        setError("");
-        navigate("/landing");
-      } else {
-        setError("Registration failed, 8+ chars, 1 num, 1 sym.");
+    value?.onRegister(username, password).then((res) => {
+      if (res.error) {
+        setError(res.error || "Registration failed");
         if (passwordField.current) passwordField.current.value = "";
+        return 
       }
+      setError("");
+      navigate("/landing");
     });
   };
 
@@ -54,10 +74,6 @@ const Home = () => {
       }
     });
   };
-
-  useEffect(() => {
-    const token = window.URLSearchParams.token
-  }, []);
 
   return (
     <div>
@@ -92,7 +108,7 @@ const Home = () => {
             Sign In
           </button>
           <button type="button" onClick={onSignInOAuth}>
-            Sign in with Google
+            <FaGoogle size={24}/>
           </button>
           <button type="button" onClick={onRegister}>
             Register

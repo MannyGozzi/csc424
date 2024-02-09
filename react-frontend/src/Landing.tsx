@@ -6,7 +6,7 @@ import { getContactsAPI, setContactsAPI } from "./api/Contacts";
 import { FaCircleCheck } from "react-icons/fa6";
 
 const Landing = () => {  
-    const [token, setToken] = useState<string>("...")
+    const [token, setToken] = useState<string>("loading...")
     const [users, setUsers] = useState<string[]>([])
     const [contacts, setContacts] = useState<string[]>([])
 
