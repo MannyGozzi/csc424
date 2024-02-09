@@ -34,3 +34,8 @@ export default {
 ```bash
 cyclonedx add files --no-input --output-format json  > cyclonedx_fe_sbom.json
 ```
+
+## Trouble With MongoDB
+Make sure that there is no error in regards to the `dbpath` argument. 
+If there is either create the folders that are specified or if you are on 
+a restricted platform (such as Apple Silicon) run `mongod --dbpath <your_new_path>`

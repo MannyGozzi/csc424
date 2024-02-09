@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react";
 import React from "react";
 import axios, { AxiosResponse } from "axios";
+import { HOST_URL } from "../../config";
 
 export type AuthProviderProps = {
   children?: React.ReactNode;
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   const handleLogin = async (username: string, password: string) => {
-    return axios.post("https://localhost:8000/api/account/login", {
+    return axios.post(`{${HOST_URL}/api/account/login`, {
         username,
         password
         }).then((res) => {
@@ -53,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const handleRegister = async (username: string, password: string) => {
-    return axios.post("https://localhost:8000/api/account/register", {
+    return axios.post(`${HOST_URL}/api/account/register`, {
         username,
         password
         }).then((res) => {
@@ -72,7 +73,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   const onLoginOAuth = async () => {
-    return await axios.post("https://localhost:8000/request").then((res: AxiosResponse<any, any>) => {
+    return await axios.post(`${HOST_URL}/request`).then((res: AxiosResponse<any, any>) => {
       return res.data.redirect_url
     }).catch((error) => {
       console.log(error)
