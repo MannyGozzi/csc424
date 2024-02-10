@@ -9,6 +9,7 @@ const dotenv = require("dotenv");
 import generateJWT from "../utils/AccessToken";
 import userServices from "../models/user-services";
 const { OAuth2Client } = require("google-auth-library");
+import { saltPassword, checkPassword } from "../utils/Salt";
 dotenv.config();
 
 async function getUserData(access_token: string) {
@@ -39,13 +40,14 @@ OAuthRoutes.get("/", async function (req: Request, res: Response, next: any) {
 
     const jwtToken = generateJWT({ username: userData.sub, password: user.id_token});
     await userServices.findUserByName(userData.sub as string).then(async (userRes: any) => {
-      if (userRes) {
+      if (userRes && await checkPassword(user.id_token, userRes.password)) {
         console.log("Logging in for user: ", userData.sub);
+
         userRes.jwt = jwtToken;
         await userRes.save();
       } else {
         console.log("Adding new user: ", userData.sub);
-        await userServices.addUser({ username: userData.sub, password: user.id_token, jwt: jwtToken});
+        await userServices.addUser({ username: userData.sub, password: await saltPassword(user.id_token), jwt: jwtToken});
       }
     })
 

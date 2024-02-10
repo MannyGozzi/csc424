@@ -10,4 +10,5 @@ function generateJWT(user: any) {
   );
 }
 
+
 export default generateJWT;

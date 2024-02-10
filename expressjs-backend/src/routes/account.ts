@@ -3,6 +3,7 @@ import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import authenticateToken from "../middleware/AuthenticateToken";
 import userServices from "../models/user-services";
+import { saltPassword, checkPassword } from "../utils/Salt";
 
 const AccountRoutes = Router();
 
@@ -11,8 +12,11 @@ AccountRoutes.post("/login", async (req, res) => {
     res.status(400).send("Missing username or password");
     return
   } 
-  await userServices.findUserByUsernamePassword(req.body.username, req.body.password).then(async (user: any) => {
+  await userServices.findUserByName(req.body.username).then(async (user: any) => {
     if (user === null) {
+      return res.status(401).send("Invalid username or password" )
+    }
+    if (! await checkPassword(req.body.password, user.password)) {
       return res.status(401).send("Invalid username or password" )
     }
     try {
@@ -20,7 +24,7 @@ AccountRoutes.post("/login", async (req, res) => {
       res.cookie("jwt", user.jwt);
     } catch (err) {
       // issue new cookie if theirs is invalid
-      const jwtToken = jwt.sign({ username: req.body.username }, process.env.TOKEN_SECRET as jwt.Secret, { expiresIn: "1h" });
+      const jwtToken = jwt.sign({ username: req.body.username, password: await saltPassword(req.body.password) }, process.env.TOKEN_SECRET as jwt.Secret, { expiresIn: "1h" });
       user.jwt = jwtToken;
       await user.save()
       res.cookie("jwt", user.jwt);
@@ -51,7 +55,9 @@ AccountRoutes.post("/register", async (req, res) => {
   ) {
     return res.status(400).send("Registration failed, 8+ chars, 1 num, 1 sym.");
   }
-  userServices.addUser({ username: req.body.username, password: req.body.password }).then((user: any) => {
+  const password = await saltPassword(req.body.password);
+  console.log("SALTED PASSWORD: ", password)
+  userServices.addUser({ username: req.body.username, password: await saltPassword(req.body.password) }).then((user: any) => {
     console.log("account created: ", user);
     res.cookie("jwt", user.jwt);
     return res.send({ token: user.jwt });
