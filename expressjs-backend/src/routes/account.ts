@@ -17,13 +17,13 @@ AccountRoutes.post("/login", async (req, res) => {
     }
     try {
       jwt.verify(user.jwt, process.env.TOKEN_SECRET as jwt.Secret)
-      res.cookie("jwt", user.jwt, { httpOnly: true, secure: true });
+      res.cookie("jwt", user.jwt);
     } catch (err) {
       // issue new cookie if theirs is invalid
       const jwtToken = jwt.sign({ username: req.body.username }, process.env.TOKEN_SECRET as jwt.Secret, { expiresIn: "1h" });
       user.jwt = jwtToken;
       await user.save()
-      res.cookie("jwt", user.jwt, { httpOnly: true, secure: true });
+      res.cookie("jwt", user.jwt);
     }
     return res.send({ token: user.jwt });
   })
@@ -53,7 +53,7 @@ AccountRoutes.post("/register", async (req, res) => {
   }
   userServices.addUser({ username: req.body.username, password: req.body.password }).then((user: any) => {
     console.log("account created: ", user);
-    res.cookie("jwt", user.jwt, { httpOnly: true, secure: true });
+    res.cookie("jwt", user.jwt);
     return res.send({ token: user.jwt });
   }).catch((error: any) => {
     console.log("error: ", error);

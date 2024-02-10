@@ -19,7 +19,7 @@ async function getUsers(name: string, job: string) {
   if (!name && !job) {
     result = await userModel.find({}).limit(50);
   } else if (name && !job) {
-    result = await findUserByName(name)
+    result = await findUserByUsername(name)
   } else if (job && !name) {
     result = await findUserByJob(job)
   }
@@ -63,7 +63,7 @@ async function addUser(userParams: any) {
   }
 }
 
-async function findUserByName(username: string) {
+async function findUserByUsername(username: string) {
   return await userModel.findOne({ username: username });
 }
 
@@ -80,7 +80,7 @@ export default {
   addUser,
   getUsers,
   findUserById,
-  findUserByName,
+  findUserByName: findUserByUsername,
   findUserByJob,
   findUserByUsernamePassword,
   findUserByJwt

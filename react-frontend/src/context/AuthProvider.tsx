@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   const handleLogout = () => {
+    document.cookie = "jwt=;";
     saveLogin(false)
   };
 
