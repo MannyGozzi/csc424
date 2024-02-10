@@ -26,6 +26,7 @@ RequestRoutes.post("/", async function (req: Request, res: Response, next: any) 
     prompt: "consent",
   });
 
+  res.clearCookie("jwt");
   res.json({ redirect_url: authorizeUrl});
 });
 

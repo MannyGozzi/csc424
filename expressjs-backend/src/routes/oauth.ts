@@ -25,7 +25,7 @@ async function getUserData(access_token: string) {
 OAuthRoutes.get("/", async function (req: Request, res: Response, next: any) {
   const code = req.query.code;
   try {
-    const redirectUrl = "https://127.0.0.1:8000/oauth";
+    const redirectUrl = `${process.env.HOST_URL}/oauth`;
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,
@@ -37,16 +37,17 @@ OAuthRoutes.get("/", async function (req: Request, res: Response, next: any) {
     const user = oAuth2Client.credentials;
     const userData = await getUserData(user.access_token);
 
-    // call your code to generate a new JWT from your backend, don't reuse Googles
+    // TODO CHECK FOR DUPLICATE GOOGLE USERS
     const jwtToken = generateJWT(user.id_token);
+    console.log("GENERATE OAUTH KEY", jwtToken);
     await userServices.addUser({ username: userData.name, jwt: jwtToken});
-    res.cookie("jwt", jwtToken, { httpOnly: true });
     const url = new URL(process.env.CLIENT_URL as string);
     url.searchParams.append("token", jwtToken);
-    res.redirect(303, url.toString());
+    res.cookie("jwt", jwtToken, { httpOnly: true, secure: true });
+    return res.redirect(303, url.toString());
     } catch (err) {
         console.log("Error with signin with Google", err);
-        res.redirect(303, process.env.CLIENT_URL as string);
+        return res.redirect(303, process.env.CLIENT_URL as string);
     }
 });
 

@@ -33,14 +33,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const saveLogin = (login: boolean) => {
     window.localStorage.setItem('loggedIn', login ? 'true' : 'false')
-    if (!login) {
-      document.cookie = 'jwt=;';
-    }
     setLoggedIn(login)
   }
 
   const handleLogin = async (username: string, password: string) => {
-    return axios.post(`{${HOST_URL}/api/account/login`, {
+    return axios.post(`${HOST_URL}/api/account/login`, {
         username,
         password
         }).then((res) => {
@@ -81,7 +78,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   const handleLogout = () => {
-    document.cookie = 'jwt=;'
     saveLogin(false)
   };
 

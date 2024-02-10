@@ -21,7 +21,6 @@ const Home = () => {
     const getOAuthTokenFromWindowIfExists = () => {
       const params = Object.fromEntries([...searchParams])
       if ("token" in params) {
-        document.cookie = `jwt=${params.token};`
         value?.saveLogin(true)
         navigate("/landing")
       }

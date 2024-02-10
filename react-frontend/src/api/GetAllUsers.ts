@@ -1,8 +1,9 @@
 import axios from "axios";
+import { HOST_URL } from "../../config";
 
 const getAllUsers = async (username: string) => {
   const response = await axios.get(
-    `https://localhost:8000/api/account/get?username=${username}`,
+    `${HOST_URL}/api/account/get?username=${username}`,
   );
   return response.data.users;
 };

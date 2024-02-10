@@ -49,13 +49,11 @@ async function findUserByJwt(jwt: string) {
 
 async function addUser(userParams: any) {
   try {
-    const user = {
-      username: userParams.username,
-      password: userParams.password,
-      jwt: ""
-    }
-    user.jwt = generateJWT(user);
-    const userToAdd = new userModel(user);
+    const jwtToken = generateJWT(userParams);
+    const userToAdd = new userModel({
+      jwt: jwtToken,
+      ...userParams
+    });
     const savedUser = await userToAdd.save();
     console.log("Saving user: ", savedUser)
     return savedUser;
